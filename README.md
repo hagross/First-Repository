@@ -18,4 +18,4 @@ It's a random project.
 
 ### H3
 
-Work from [week 6](HW#6.nb.html)
+Work from [week 6](HW6.nb.html)
