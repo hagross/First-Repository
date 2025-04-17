@@ -17,3 +17,5 @@ It's a random project.
 ## H2
 
 ### H3
+
+Work from [week 6](HW #6.nb.html)
