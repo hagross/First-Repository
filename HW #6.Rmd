@@ -1,0 +1,170 @@
+---
+title: 'HW #6'
+author: "Haley Gross"
+date: "4/2/25"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(ggrepel)
+```
+### Q1: 
+
+
+```{r}
+ggplot(mtcars, aes(x = hp, y = mpg, color = factor(cyl), label = rownames(mtcars))) +
+  geom_point(size = 1.5) +
+  geom_text_repel(size = 2, segment.color = NA) +
+  labs(y = "mpg", x = "hp", title = "mpg vs hp", color = "cyl") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+        panel.background = element_rect(fill = "gray90", color = NA),
+        panel.grid.major = element_line(color = "white", size = 0.8),
+        panel.grid.minor = element_line(color = "white", size = 0.4),
+        legend.key = element_rect(fill = "gray90", color = NA))
+```
+
+### Q2:
+
+
+```{r}
+ggplot(diamonds,aes(cut,fill=color))+geom_bar()+
+  labs(x="cut",y="count",fill="color")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom")
+```
+
+### Q3:
+
+
+```{r}
+ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
+  geom_boxplot(width = 0.1) +
+  labs(x = "Species", y = "Sepal.Length") +
+  theme(panel.border = element_rect(color = "black",fill=NA, linewidth=1),
+    axis.title.x = element_text(size = 14),
+    panel.background = element_rect(fill = "white"))
+```
+
+### Q4:
+
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +
+  geom_point() +
+  facet_wrap(~ factor(cyl)) +
+  labs(x = "WT", y = "mpg", color = "cyl") +
+  theme(text = element_text(size = 14),
+    strip.text = element_text(color = "darkgreen"),
+    legend.position = "bottom")
+```
+
+### Q5:
+
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg, size = hp, color = disp)) +
+  geom_point(shape = 16, range = c(2, 8)) +
+  scale_color_gradient(low = "lightpink", high = "lightblue") +
+  labs(title = "mpg vs. wt",x = "wt",y = "mpg",size = "hp",color = "disp")+
+  theme(plot.title = element_text(face = "bold", hjust = 0.5),
+    legend.position = "bottom")
+```
+
+### Q6:
+
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +
+  geom_point() +
+  labs(title = "Logarithmic Scale for MPG vs Weight",x = "wt",y = "mpg (log scale)",color = "cyl")+
+  scale_y_continuous(trans = "log10") +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
+```
+
+### Q7:
+
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg, alpha = mpg)) +
+  geom_point(color = "blue", size = 1.5) +
+  scale_alpha(range = c(0.1, 1), name = "mpg") +
+  annotate("rect", xmin = 1, xmax = 2, ymin = 25, ymax = 35, fill = "blue", alpha = 0.1) +
+  annotate("text", x = 1.5, y = 30, label = "low wt high mpg", size = 4, color = "black") +
+  labs(title = "MPG vs Weight (Transparency by MPG)",x = "wt",y = "mpg") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    legend.position = "bottom",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+    legend.key.size = unit(1, "cm"),
+    legend.key = element_rect(fill = "gray90",color = "gray90"),
+    panel.background = element_rect(fill = "gray90", color = NA),
+    panel.grid.major = element_line(color = "white"),
+    panel.grid.minor = element_line(color = "white"))
+```
+
+### Q8:
+
+
+```{r}
+mpg_by_cyl <- mtcars %>%
+  group_by(cyl) %>%
+  summarize(mean_mpg = mean(mpg))
+
+ggplot(mpg_by_cyl, aes(x = factor(cyl), y = mean_mpg)) +
+  geom_bar(fill = "steelblue", stat = "identity") +
+  labs(title = "Average MPG by Cylinder Count", x = "cyl", y = "mean_mpg") +
+  scale_y_continuous(limits = c(0, 30), breaks = c(0, 10, 20)) +
+  theme(plot.title = element_text(face="bold", hjust = 0.5))
+```
+
+### Q9:
+
+
+```{r}
+diamond_price_by_cut <- diamonds %>%
+  group_by(cut) %>%
+  summarize(mean_price = mean(price))
+
+diamond_price_by_cut$cut <- factor(diamond_price_by_cut$cut, 
+    levels = c("Ideal", "Good", "Very Good", "Fair", "Premium"))
+
+ggplot(diamond_price_by_cut, aes(x = cut, y = mean_price, fill = cut)) +
+  geom_bar(stat = "identity") +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Average Diamond Price by Cut Quality", x = "cut", y = "Average Price") +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
+```
+
+### Q10:
+
+
+```{r}
+iris_subset <- iris[iris$Species %in% c("setosa", "versicolor"),]
+
+ggplot(iris_subset, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Septal Length and Petal Length (Setosa & Versicolor)", 
+       x = "Sepal Length (cm)", 
+       y = "Petal Length (cm)",
+       color = "Species") +
+  theme(plot.title = element_text(hjust = 0.5, family = "mono"),
+        axis.title = element_text(family = "mono"),
+        axis.text = element_text(family = "mono"),
+        legend.title = element_text(family = "mono"),
+        legend.text = element_text(family = "mono"),
+        legend.position = "bottom")
+```
+
+
+
+
